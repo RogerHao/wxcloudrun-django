@@ -39,6 +39,20 @@ def wx_check(request, _):
                             json_dumps_params={'ensure_ascii': False})
 
 
+def user_msg(request, _):
+    """
+    处理用户消息
+
+     `` request `` 请求对象
+    """
+
+    logger.info('user_msg req: {}'.format(request.body))
+    print('user_msg req: {}'.format(request.body))
+
+    return JsonResponse({'code': 0, 'errorMsg': ''},
+                        json_dumps_params={'ensure_ascii': False})
+
+
 def index(request, _):
     """
     获取主页
