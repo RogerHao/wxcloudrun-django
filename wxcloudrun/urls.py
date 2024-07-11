@@ -19,7 +19,7 @@ from django.conf.urls import url
 
 urlpatterns = (
     # Handle the wx check
-    url(r'^^wx(/)?$', views.index),
+    url(r'^^wx(/)?$', views.wx_check),
 
     # 计数器接口
     url(r'^^api/count(/)?$', views.counter),

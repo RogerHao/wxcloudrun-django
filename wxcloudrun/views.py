@@ -1,5 +1,7 @@
 import json
 import logging
+import hashlib
+import web
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -7,6 +9,35 @@ from wxcloudrun.models import Counters
 
 
 logger = logging.getLogger('log')
+
+def wx_check(request, _):
+    """
+    处理微信接口校验
+
+     `` request `` 请求对象
+    """
+    try:
+        data = web.input()
+        if len(data) == 0:
+            return "hello, this is handle view"
+        signature = data.signature
+        timestamp = data.timestamp
+        nonce = data.nonce
+        echostr = data.echostr
+        token = "112358" #请按照公众平台官网\基本配置中信息填写
+
+        list = [token, timestamp, nonce]
+        list.sort()
+        sha1 = hashlib.sha1()
+        map(sha1.update, list)
+        hashcode = sha1.hexdigest()
+        if hashcode == signature:
+            return echostr
+        else:
+            return ""
+    except Exception as Argument:
+        return Argument
+
 
 
 def index(request, _):
