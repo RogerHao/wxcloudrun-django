@@ -1,7 +1,6 @@
 import json
 import logging
 import hashlib
-import web
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -16,28 +15,28 @@ def wx_check(request, _):
 
      `` request `` 请求对象
     """
-    try:
-        data = web.input()
-        if len(data) == 0:
-            return "hello, this is handle view"
-        signature = data.signature
-        timestamp = data.timestamp
-        nonce = data.nonce
-        echostr = data.echostr
-        token = "112358" #请按照公众平台官网\基本配置中信息填写
+    
+    logger.info('wx_check req: {}'.format(request.GET))
 
-        list = [token, timestamp, nonce]
-        list.sort()
-        sha1 = hashlib.sha1()
-        map(sha1.update, list)
-        hashcode = sha1.hexdigest()
-        if hashcode == signature:
-            return echostr
-        else:
-            return ""
-    except Exception as Argument:
-        return Argument
+    if 'signature' not in request.GET or 'timestamp' not in request.GET or 'nonce' not in request.GET:
+        return JsonResponse({'code': -1, 'errorMsg': '缺少参数'},
+                            json_dumps_params={'ensure_ascii': False})
 
+    signature = request.GET.get('signature')
+    timestamp = request.GET.get('timestamp')
+    nonce = request.GET.get('nonce')
+    token = 'wxcloudrun'
+
+    tmp_list = [token, timestamp, nonce]
+    tmp_list.sort()
+    tmp_str = ''.join(tmp_list)
+    tmp_str = hashlib.sha1(tmp_str.encode('utf-8')).hexdigest()
+    if tmp_str == signature:
+        return JsonResponse({'code': 0, 'data': request.GET.get('echostr')},
+                            json_dumps_params={'ensure_ascii': False})
+    else:
+        return JsonResponse({'code': -1, 'errorMsg': '签名错误'},
+                            json_dumps_params={'ensure_ascii': False})
 
 
 def index(request, _):
