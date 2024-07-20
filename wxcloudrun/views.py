@@ -8,6 +8,7 @@ from wxcloudrun.models import Counters
 from django.http import HttpResponse, JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
 
+from wechat_reply import ReplyFactory, Article
 
 logger = logging.getLogger('log')
 
@@ -23,7 +24,23 @@ def wechat(request, _):
             # Log the received message (similar to console.log in Node.js)
             print('消息推送', data)
             
-            # Return a simple "success" response with status 200
+            # Check if the action is "CheckContainerPath"
+            if data.get('action') == 'CheckContainerPath':
+                # Return a simple "success" response with status 200
+                return HttpResponse('success', status=200)
+            
+            if data.get('MsgType') == 'text':
+                content = data.get('Content', '')
+                from_user = data.get('FromUserName')
+                to_user = data.get('ToUserName')
+                
+                # Create a text reply message
+                reply = ReplyFactory.create_text_reply(to_user, from_user, content)
+                
+                # Return the reply message as a JSON response
+                return HttpResponse(json.dumps(reply.to_dict()), content_type='application/json')
+            
+            # If the message type is not text, return an empty response
             return HttpResponse('success', status=200)
         
         except json.JSONDecodeError:
