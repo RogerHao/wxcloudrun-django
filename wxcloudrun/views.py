@@ -15,7 +15,7 @@ logger = logging.getLogger('log')
 # @csrf_exempt  # This decorator is used to exempt this view from CSRF protection
 def wechat(request, _):
     # Check if the request method is POST
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method == 'post':
         try:
             # Parse the JSON data from the request body
             data = json.loads(request.body)
@@ -23,17 +23,13 @@ def wechat(request, _):
             # Log the received message (similar to console.log in Node.js)
             print('消息推送', data)
             
-            # Check if the action is "CheckContainerPath"
-            if data.get('action') == 'CheckContainerPath':
-                # If it is, return a JSON response with success message and 200 status
-                return JsonResponse({'message': 'success'}, status=200)
-            
-            # For any other case, just return a simple "success" response
-            return HttpResponse('success')
+            # Return a simple "success" response with status 200
+            return HttpResponse('success', status=200)
         
         except json.JSONDecodeError:
-            # If there's an error in parsing JSON, return an error response
-            return HttpResponse('Invalid JSON', status=400)
+            # If there's an error in parsing JSON, we still return "success"
+            # because the WeChat server only expects to see "success" or an empty response
+            return HttpResponse('success', status=200)
     
     # If the request method is not POST, return a method not allowed response
     return HttpResponse('Method not allowed', status=405)
