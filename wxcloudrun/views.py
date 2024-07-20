@@ -6,13 +6,13 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from wxcloudrun.models import Counters
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+# from django.views.decorators.csrf import csrf_exempt
 
 
 logger = logging.getLogger('log')
 
 # Handle the wechat request
-@csrf_exempt  # This decorator is used to exempt this view from CSRF protection
+# @csrf_exempt  # This decorator is used to exempt this view from CSRF protection
 def wechat(request):
     # Check if the request method is POST
     if request.method == 'POST':
