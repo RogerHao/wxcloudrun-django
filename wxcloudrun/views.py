@@ -13,7 +13,7 @@ logger = logging.getLogger('log')
 
 # Handle the wechat request
 # @csrf_exempt  # This decorator is used to exempt this view from CSRF protection
-def wechat(request):
+def wechat(request, _):
     # Check if the request method is POST
     if request.method == 'POST':
         try:
